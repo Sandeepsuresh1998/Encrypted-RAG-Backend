@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "sanic-api-mirror"
+version = "0.1.0"
+description = ""
+authors = ["Sandeep Suresh <sandeep@magic.link>"]
+readme = "README.md"
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+pinecone-client = "^2.2.4"
+llama-index = "^0.9.9"
+sanic = "^23.6.0"
+python-dotenv = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
