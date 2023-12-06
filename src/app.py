@@ -5,15 +5,19 @@ from utils.constants import APP_NAME
 from dotenv import load_dotenv
 import os
 from embeddings.routes import bp as embeddings_bp
-
-import pinecone
+from k8s_routes import bp as k8s_bp
 
 load_dotenv()
 
 def create_app():
     app = Sanic(APP_NAME)
+    app.config.update({
+        "SANIC_PINECONE_KEY": os.getenv("SANIC_PINECONE_KEY"),
+        "SANIC_OPENAI_KEY": os.getenv("SANIC_OPENAI_KEY"),
+    })
 
     app.blueprint(embeddings_bp)
+    app.blueprint(k8s_bp)
     return app
 
 
@@ -25,19 +29,8 @@ def run_app():
         port=8000,
         debug=True,
         access_log=True,
+        auto_reload=True,
     )
-
-    pinecone.init(
-        api_key=os.getenv("PINECONE_API_KEY"),
-        environment="gcp-starter",
-    )
-
-    journal_index = pinecone.Index("journal_index")
-
-    app.ctx.journal_index = journal_index
-
-
-
 
     try:
         Sanic.serve(primary=app, app_loader=loader)
