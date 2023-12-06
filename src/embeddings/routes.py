@@ -34,29 +34,29 @@ async def create(request, body: EmbeddingCreate):
       model="text-embedding-ada-002",
    ).data[0].embedding
 
+@bp.post("v1/embeddings/clear")
+async def clear(request):
+   ## TODO: This is really only for testing purposes and should be removed in production
+   sanic_app = Sanic.get_app(APP_NAME)
 
    # Create connection to pinecone
    openapi_config = OpenApiConfiguration.get_default_copy()
-   openapi_config.verify_ssl = False # Wasn't working locally
-   ## TODO: This should really be long living in the sanic app context
-   print(sanic_app.config.SANIC_PINECONE_KEY)
+   openapi_config.verify_ssl = False
+
+
    pinecone.init(
       api_key=sanic_app.config.SANIC_PINECONE_KEY,
       environment="gcp-starter",
       openapi_config=openapi_config,
-    )
+   )
    
    # Retrieve the index
    journal_index = pinecone.Index("journal")
 
-   journal_index.upsert(
-    vectors=[
-       {
-          "id": body.user_id,
-          "values": embeddings_vector, 
-          "metadata": {'user_id': body.user_id}},
-    ],
+   journal_index.delete(
+      ids=["kljsndfkjn-skdjbnfs"],
    )
+
    return json(
-      {"pinecone_resp": embeddings_vector}
+      {"success": "true"}
    )
