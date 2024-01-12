@@ -5,18 +5,22 @@ from utils.constants import APP_NAME
 from dotenv import load_dotenv
 import os
 from embeddings.routes import bp as embeddings_bp
+from queries.routes import bp as queries_bp
 from k8s_routes import bp as k8s_bp
+from utils.pinecone_ops import PineconeOperations
 
 load_dotenv()
 
 def create_app():
     app = Sanic(APP_NAME)
+    pinecone_ops = PineconeOperations()
     app.config.update({
-        "SANIC_PINECONE_KEY": os.getenv("SANIC_PINECONE_KEY"),
         "SANIC_OPENAI_KEY": os.getenv("SANIC_OPENAI_KEY"),
+        "PINECONE": pinecone_ops,
     })
 
     app.blueprint(embeddings_bp)
+    app.blueprint(queries_bp)
     app.blueprint(k8s_bp)
     return app
 

@@ -2,24 +2,30 @@ from utils.constants import APP_NAME
 from sanic import Sanic
 from sanic import Blueprint
 from sanic_ext import validate
-from embeddings.types import EmbeddingCreate
-from llama_index.embeddings import OpenAIEmbedding
-from llama_index import VectorStoreIndex, SimpleDirectoryReader
+from queries.types import QueryGenerate
+from llama_index.vector_stores import PineconeVectorStore
+from llama_index import VectorStoreIndex
 from sanic import json
 
-bp = Blueprint("embeddings")
+bp = Blueprint("queries")
 
-@bp.post("/v1/embeddings/create")
-@validate(json=EmbeddingCreate)
-async def create(request, body: EmbeddingCreate):
-
-   embeddings_model = OpenAIEmbedding()
+@bp.get("/v1/queries/get")
+@validate(query=QueryGenerate)
+async def create(request, query: QueryGenerate):
    app = Sanic.get_app(APP_NAME)
-   journal_index = app.ctx.journal_index
-   journal_index.upsert(
-    vectors=[
-       {'id': "vec1", "values":[0.1, 0.2, 0.3, 0.4], "metadata": {'genre': 'drama'}},
-       {'id': "vec2", "values":[0.2, 0.3, 0.4, 0.5], "metadata": {'genre': 'action'}},
-    ],
+   pinecone_ops = app.config.PINECONE
+   pinecone_index = pinecone_ops.get_index("journal")
+   vector_store = PineconeVectorStore(
+      pinecone_index=pinecone_index,
    )
-   return json({"hello": "world"})
+   index = VectorStoreIndex.from_vector_store(vector_store)
+   query_engine = index.as_query_engine()
+   query_response = query_engine.query(query.prompt)
+   print(query_response)
+   return json(
+      {
+         "response": query_response.response,
+         "success": "true",
+      }
+   )
+   

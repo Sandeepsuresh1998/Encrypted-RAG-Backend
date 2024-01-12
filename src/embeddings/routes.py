@@ -4,16 +4,16 @@ from utils.constants import APP_NAME
 from sanic import Sanic
 from sanic_ext import validate
 from embeddings.types import EmbeddingCreate
-from llama_index.embeddings import OpenAIEmbedding
-from llama_index import VectorStoreIndex
+from llama_index.schema import Document
 from openai import OpenAI
 import pinecone
 from pinecone.core.client.configuration import Configuration as OpenApiConfiguration
-
+from sanic_ext import cors
 bp = Blueprint("embeddings")
 
 
 @bp.post("/v1/embeddings/create")
+@cors(origin="*")
 @validate(json=EmbeddingCreate)
 async def create(request, body: EmbeddingCreate):
 
@@ -22,6 +22,7 @@ async def create(request, body: EmbeddingCreate):
    # Create the embeddings for the loaded text
    text_input = body.text
    sanic_app = Sanic.get_app(APP_NAME)
+   pinecone_ops = sanic_app.config.PINECONE
 
    # Generate the embedding with OpenAI
    openai = OpenAI(
@@ -34,18 +35,8 @@ async def create(request, body: EmbeddingCreate):
       model="text-embedding-ada-002",
    ).data[0].embedding
 
-   # Create connection to pinecone
-   openapi_config = OpenApiConfiguration.get_default_copy()
-   openapi_config.verify_ssl = False # Wasn't working locally
-   ## TODO: This should really be long living in the sanic app context
-   pinecone.init(
-      api_key=sanic_app.config.SANIC_PINECONE_KEY,
-      environment="gcp-starter",
-      openapi_config=openapi_config,
-    )
-
    # Retrieve the index
-   journal_index = pinecone.Index("journal")
+   journal_index = pinecone_ops.get_index("journal")
    journal_index.upsert(
       vectors=[
          {
