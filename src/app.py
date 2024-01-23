@@ -1,22 +1,25 @@
 from sanic import Sanic
-from sanic.response import text
 from sanic.worker.loader import AppLoader
 from utils.constants import APP_NAME
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 from embeddings.routes import bp as embeddings_bp
 from queries.routes import bp as queries_bp
 from k8s_routes import bp as k8s_bp
-from utils.pinecone_ops import PineconeOperations
+from utils.rag import RAGOperations
 
 load_dotenv()
 
 def create_app():
     app = Sanic(APP_NAME)
-    pinecone_ops = PineconeOperations()
+    pinecone_key = os.getenv("PINECONE_API_KEY")
+    sanic_openai_key = os.getenv("SANIC_OPENAI_KEY")
+    rag_ops = RAGOperations(
+        pinecone_key=pinecone_key,
+    )
     app.config.update({
-        "SANIC_OPENAI_KEY": os.getenv("SANIC_OPENAI_KEY"),
-        "PINECONE": pinecone_ops,
+        "SANIC_OPENAI_KEY": sanic_openai_key,
+        "RAG_OPS": rag_ops,
     })
 
     app.blueprint(embeddings_bp)
