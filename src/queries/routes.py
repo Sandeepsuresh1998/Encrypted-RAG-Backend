@@ -6,6 +6,7 @@ from queries.types import QueryGenerate
 from llama_index.vector_stores import PineconeVectorStore
 from llama_index import VectorStoreIndex
 from sanic import json
+from utils.rag import DecryptionNodePostProcessor
 
 bp = Blueprint("queries")
 
@@ -13,13 +14,23 @@ bp = Blueprint("queries")
 @validate(query=QueryGenerate)
 async def create(request, query: QueryGenerate):
    app = Sanic.get_app(APP_NAME)
-   pinecone_ops = app.config.PINECONE
-   pinecone_index = pinecone_ops.get_index("journal")
+   rag_ops = app.config.RAG_OPS
+   pinecone_index = rag_ops.get_index("journal")
    vector_store = PineconeVectorStore(
       pinecone_index=pinecone_index,
    )
    index = VectorStoreIndex.from_vector_store(vector_store)
-   query_engine = index.as_query_engine()
+   # retriever = index.as_retriever()
+   # nodes = retriever.retrieve(query.prompt)
+   # for node in nodes:
+   #    print(node.text)
+   #    text = rag_ops.decrypt_text(node.text)
+
+   query_engine = index.as_query_engine(
+      node_postprocessors=[
+         DecryptionNodePostProcessor(),
+      ]
+   )
    query_response = query_engine.query(query.prompt)
    print(query_response)
    return json(
