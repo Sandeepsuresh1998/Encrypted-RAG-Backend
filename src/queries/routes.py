@@ -32,7 +32,6 @@ async def create(request, query: QueryGenerate):
       ]
    )
    query_response = query_engine.query(query.prompt)
-   print(query_response)
    return json(
       {
          "response": query_response.response,

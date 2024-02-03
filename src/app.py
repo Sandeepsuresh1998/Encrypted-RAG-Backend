@@ -42,7 +42,7 @@ def run_app():
     try:
         Sanic.serve(primary=app, app_loader=loader)
     except Exception as e:
-        print(e)
+        pass
 
 
 if __name__ == "__main__":
