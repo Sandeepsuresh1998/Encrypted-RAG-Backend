@@ -19,6 +19,7 @@ async def create(request, query: QueryGenerate):
    app = Sanic.get_app(APP_NAME)
    rag_ops = app.config.RAG_OPS
    pinecone_index = rag_ops.get_index("journal")
+   print("Created pinecone index", pinecone_index)
    vector_store = PineconeVectorStore(
       pinecone_index=pinecone_index,
    )
