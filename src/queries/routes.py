@@ -29,18 +29,14 @@ async def create(request, query: QueryGenerate):
    )
    print(os.getenv("PINECONE_API_KEY"))
    pinecone_index = pinecone.Index("journal")
-   print("Created pinecone index", pinecone_index)
 
-   vector_store = PineconeVectorStore(
-      pinecone_index=pinecone_index,
-      api_key=os.getenv("PINECONE_API_KEY"),
-      environment=PINECONE_ENV
-   )
-   print("Created pinecone vector store", vector_store)
-   index = VectorStoreIndex.from_vector_store(vector_store)
-   print("Created vector store index")
+   # vector_store = PineconeVectorStore(
+   #    pinecone_index=pinecone_index,
+   #    api_key=os.getenv("PINECONE_API_KEY"),
+   #    environment=PINECONE_ENV
+   # )
+   # index = VectorStoreIndex.from_vector_store(vector_store)
    # retriever = index.as_retriever()
-   # print("Created retriever")
    # nodes = retriever.retrieve(query.prompt)
    # print("Retrieved nodes")
    # for node in nodes:
