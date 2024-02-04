@@ -15,6 +15,7 @@ bp = Blueprint("queries")
 @cors(origin="*")
 @validate(query=QueryGenerate)
 async def create(request, query: QueryGenerate):
+   print("Received query prompt: ", query.prompt)
    app = Sanic.get_app(APP_NAME)
    rag_ops = app.config.RAG_OPS
    pinecone_index = rag_ops.get_index("journal")
