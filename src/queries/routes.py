@@ -23,9 +23,9 @@ async def create(request, query: QueryGenerate):
       pinecone_index=pinecone_index,
    )
    print("Created pinecone vector store")
-   # index = VectorStoreIndex.from_vector_store(vector_store)
-   # retriever = index.as_retriever()
-   # print("Created retriever")
+   index = VectorStoreIndex.from_vector_store(vector_store)
+   retriever = index.as_retriever()
+   print("Created retriever")
    # nodes = retriever.retrieve(query.prompt)
    # print("Retrieved nodes")
    # for node in nodes:
