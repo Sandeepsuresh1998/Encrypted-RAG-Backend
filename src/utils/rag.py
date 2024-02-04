@@ -46,13 +46,13 @@ class RAGOperations:
         return pinecone.Index(index_name)
 
     
-    def create_embedding(self, text_input: str, openai_key: str):
+    async def create_embedding(self, text_input: str, openai_key: str):
         # Create openai connection
         openai = OpenAI(
             api_key=openai_key
         )
         # Generate the embedding with OpenAI
-        embeddings_vector = openai.embeddings.create(
+        embeddings_vector = await openai.embeddings.create(
            input=[text_input], 
            model="text-embedding-ada-002",
         ).data[0].embedding
