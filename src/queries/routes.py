@@ -6,11 +6,13 @@ from queries.types import QueryGenerate
 from llama_index.vector_stores import PineconeVectorStore
 from llama_index import VectorStoreIndex
 from sanic import json
+from sanic_ext import cors
 from utils.rag import DecryptionNodePostProcessor
 
 bp = Blueprint("queries")
 
 @bp.get("/v1/queries/get")
+@cors(origin="*")
 @validate(query=QueryGenerate)
 async def create(request, query: QueryGenerate):
    app = Sanic.get_app(APP_NAME)
