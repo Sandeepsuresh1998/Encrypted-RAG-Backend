@@ -38,24 +38,24 @@ def create(request, query: QueryGenerate):
       environment=PINECONE_ENV
    )
    print("Created vector store")
-   index = VectorStoreIndex.from_vector_store(vector_store)
-   query_engine = index.as_query_engine(
-      node_postprocessors=[
-         DecryptionNodePostProcessor(),
-      ]
-   )
-   print("Created query engine")
-   query_response = query_engine.query(query.prompt)
-   return json(
-      {
-         "response": query_response.response,
-         "success": "true",
-      }
-   )
-
+   # index = VectorStoreIndex.from_vector_store(vector_store)
+   # query_engine = index.as_query_engine(
+   #    node_postprocessors=[
+   #       DecryptionNodePostProcessor(),
+   #    ]
+   # )
+   # print("Created query engine")
+   # query_response = query_engine.query(query.prompt)
    # return json(
    #    {
-   #       "response": "This is a test response",
+   #       "response": query_response.response,
+   #       "success": "true",
    #    }
    # )
+
+   return json(
+      {
+         "response": "This is a test response",
+      }
+   )
    
