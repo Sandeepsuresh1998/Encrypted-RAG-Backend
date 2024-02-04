@@ -22,9 +22,9 @@ async def create(request, query: QueryGenerate):
    print("Received query prompt: ", query.prompt)
    sanic_app = Sanic.get_app(APP_NAME)
    rag_ops = sanic_app.config.RAG_OPS
-   
+
    pinecone_openapi_config = OpenApiConfiguration.get_default_copy()
-   await pinecone.init(
+   pinecone.init(
       api_key=os.getenv("PINECONE_API_KEY"),
       environment=PINECONE_ENV,
       openapi_config=pinecone_openapi_config
