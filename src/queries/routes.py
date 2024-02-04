@@ -37,27 +37,28 @@ async def create(request, query: QueryGenerate):
       api_key=os.getenv("PINECONE_API_KEY"),
       environment=PINECONE_ENV
    )
-   index = VectorStoreIndex.from_vector_store(vector_store)
-   retriever = index.as_retriever()
-   nodes = await retriever.retrieve(query.prompt)
-   print("Retrieved nodes")
-   for node in nodes:
-      print(node.text)
-      text = rag_ops.decrypt_text(node.text)
+   print("Created vector store")
+   # index = VectorStoreIndex.from_vector_store(vector_store)
+   # retriever = index.as_retriever()
+   # nodes = await retriever.retrieve(query.prompt)
+   # print("Retrieved nodes")
+   # for node in nodes:
+   #    print(node.text)
+   #    text = rag_ops.decrypt_text(node.text)
 
 
-   query_engine = index.as_query_engine(
-      node_postprocessors=[
-         DecryptionNodePostProcessor(),
-      ]
-   )
-   query_response = await query_engine.query(query.prompt)
-   return json(
-      {
-         "response": query_response.response,
-         "success": "true",
-      }
-   )
+   # query_engine = index.as_query_engine(
+   #    node_postprocessors=[
+   #       DecryptionNodePostProcessor(),
+   #    ]
+   # )
+   # query_response = await query_engine.query(query.prompt)
+   # return json(
+   #    {
+   #       "response": query_response.response,
+   #       "success": "true",
+   #    }
+   # )
 
    return json(
       {
