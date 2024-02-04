@@ -18,7 +18,7 @@ bp = Blueprint("queries")
 @bp.get("/v1/queries/get")
 @cors(origin="*")
 @validate(query=QueryGenerate)
-async def create(request, query: QueryGenerate):
+def create(request, query: QueryGenerate):
    print("Received query prompt: ", query.prompt)
    sanic_app = Sanic.get_app(APP_NAME)
    rag_ops = sanic_app.config.RAG_OPS
