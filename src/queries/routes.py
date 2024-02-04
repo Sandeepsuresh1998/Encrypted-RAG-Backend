@@ -8,6 +8,8 @@ from llama_index import VectorStoreIndex
 from sanic import json
 from sanic_ext import cors
 from utils.rag import DecryptionNodePostProcessor
+import os
+from utils.constants import PINECONE_ENV
 
 bp = Blueprint("queries")
 
@@ -22,10 +24,12 @@ async def create(request, query: QueryGenerate):
    print("Created pinecone index", pinecone_index)
    vector_store = PineconeVectorStore(
       pinecone_index=pinecone_index,
+      api_key=os.getenv("PINECONE_API_KEY"),
+      environment=PINECONE_ENV
    )
    print("Created pinecone vector store", vector_store)
-   # index = VectorStoreIndex.from_vector_store(vector_store)
-   # print("Created vector store index")
+   index = VectorStoreIndex.from_vector_store(vector_store)
+   print("Created vector store index")
    # retriever = index.as_retriever()
    # print("Created retriever")
    # nodes = retriever.retrieve(query.prompt)
