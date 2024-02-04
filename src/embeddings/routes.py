@@ -23,7 +23,7 @@ async def create(request, body: EmbeddingCreate):
 
    embeddings_vector = rag_ops.create_embedding(
       text_input=text_input,
-      openai_key=sanic_app.config.SANIC_OPENAI_KEY,
+      openai_key=sanic_app.config.OPENAI_API_KEY,
    )
 
    # Upsert the embeddings into Pinecone

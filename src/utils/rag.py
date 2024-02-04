@@ -47,7 +47,6 @@ class RAGOperations:
 
     
     def create_embedding(self, text_input: str, openai_key: str):
-
         # Create openai connection
         openai = OpenAI(
             api_key=openai_key

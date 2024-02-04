@@ -13,12 +13,12 @@ load_dotenv()
 def create_app():
     app = Sanic(APP_NAME)
     pinecone_key = os.getenv("PINECONE_API_KEY")
-    sanic_openai_key = os.getenv("SANIC_OPENAI_KEY")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     rag_ops = RAGOperations(
         pinecone_key=pinecone_key,
     )
     app.config.update({
-        "SANIC_OPENAI_KEY": sanic_openai_key,
+        "OPENAI_API_KEY": OPENAI_API_KEY,
         "RAG_OPS": rag_ops,
     })
 
