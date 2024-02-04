@@ -39,19 +39,12 @@ def create(request, query: QueryGenerate):
    )
    print("Created vector store")
    index = VectorStoreIndex.from_vector_store(vector_store)
-   retriever = index.as_retriever()
-   nodes = retriever.retrieve(query.prompt)
-   print("Retrieved nodes")
-   for node in nodes:
-      print(node.text)
-      text = rag_ops.decrypt_text(node.text)
-
-
    query_engine = index.as_query_engine(
       node_postprocessors=[
          DecryptionNodePostProcessor(),
       ]
    )
+   print("Created query engine")
    query_response = query_engine.query(query.prompt)
    return json(
       {
