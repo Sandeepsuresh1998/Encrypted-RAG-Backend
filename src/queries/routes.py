@@ -4,7 +4,7 @@ from sanic import Blueprint
 from sanic_ext import validate
 from queries.types import QueryGenerate
 from llama_index.vector_stores import PineconeVectorStore
-from llama_index import VectorStoreIndex
+from llama_index import VectorStoreIndex, ServiceContext
 from sanic import json
 from sanic_ext import cors
 from utils.rag import DecryptionNodePostProcessor
@@ -12,6 +12,7 @@ from pinecone.core.client.configuration import Configuration as OpenApiConfigura
 import os
 from utils.constants import PINECONE_ENV
 import pinecone 
+
 
 bp = Blueprint("queries")
 
@@ -38,7 +39,10 @@ def create(request, query: QueryGenerate):
       environment=PINECONE_ENV
    )
    print("Created vector store")
-   # index = VectorStoreIndex.from_vector_store(vector_store)
+   index = VectorStoreIndex.from_vector_store(
+      vector_store,
+      service_context=ServiceContext.from_defaults()
+   )
    print("Created index")
    # query_engine = index.as_query_engine(
    #    node_postprocessors=[
