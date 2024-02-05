@@ -47,6 +47,21 @@ def create(request, query: QueryGenerate):
          vector_store,
          ServiceContext.from_defaults()
       )
+
+      query_engine = index.as_query_engine(
+         node_postprocessors=[
+            DecryptionNodePostProcessor(),
+         ]
+      )
+      logger.info("Created query engine")
+      query_response = query_engine.query(query.prompt)
+      return json(
+         {
+            "response": query_response.response,
+            "success": "true",
+         }
+      )
+
    except Exception as e:
       logger.error("Error creating index: %s", e)
       return json(
@@ -55,22 +70,4 @@ def create(request, query: QueryGenerate):
             "success": "false",
          }
       )
-   # query_engine = index.as_query_engine(
-   #    node_postprocessors=[
-   #       DecryptionNodePostProcessor(),
-   #    ]
-   # )
-   # logger.info("Created query engine")
-   # query_response = query_engine.query(query.prompt)
-   # return json(
-   #    {
-   #       "response": query_response.response,
-   #       "success": "true",
-   #    }
-   # )
 
-   return json(
-      {
-         "response": "This is a test response",
-      }
-   )
