@@ -38,7 +38,7 @@ def create(request, query: QueryGenerate):
       environment=PINECONE_ENV
    )
    print("Created vector store")
-   index = VectorStoreIndex.from_vector_store(vector_store)
+   # index = VectorStoreIndex.from_vector_store(vector_store)
    print("Created index")
    # query_engine = index.as_query_engine(
    #    node_postprocessors=[
