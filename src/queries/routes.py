@@ -31,6 +31,7 @@ def create(request, query: QueryGenerate):
       openapi_config=pinecone_openapi_config
    )
    print(os.getenv("PINECONE_API_KEY"))
+   print(os.getenv("OPENAI_API_KEY"))
    pinecone_index = pinecone.Index("journal")
 
    vector_store = PineconeVectorStore(
