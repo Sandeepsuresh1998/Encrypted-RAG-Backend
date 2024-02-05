@@ -33,7 +33,7 @@ def run_app():
     app = loader.load()
     app.prepare(
         host="0.0.0.0",
-        port=8000,
+        port=10000,
         debug=True,
         access_log=True,
         auto_reload=True,
