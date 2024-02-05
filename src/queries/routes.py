@@ -22,27 +22,27 @@ bp = Blueprint("queries")
 @cors(origin="*")
 @validate(query=QueryGenerate)
 def create(request, query: QueryGenerate):
-   logger.info("Received query prompt: %s", query.prompt)
-   sanic_app = Sanic.get_app(APP_NAME)
-   rag_ops = sanic_app.config.RAG_OPS
-
-   pinecone_openapi_config = OpenApiConfiguration.get_default_copy()
-   pinecone.init(
-      api_key=os.getenv("PINECONE_API_KEY"),
-      environment=PINECONE_ENV,
-      openapi_config=pinecone_openapi_config
-   )
-   logger.info(os.getenv("PINECONE_API_KEY"))
-   logger.info(os.getenv("OPENAI_API_KEY"))
-   pinecone_index = pinecone.Index("journal")
-
-   vector_store = PineconeVectorStore(
-      pinecone_index=pinecone_index,
-      api_key=os.getenv("PINECONE_API_KEY"),
-      environment=PINECONE_ENV
-   )
-   logger.info("Created vector store")
    try:
+      logger.info("Received query prompt: %s", query.prompt)
+      sanic_app = Sanic.get_app(APP_NAME)
+      rag_ops = sanic_app.config.RAG_OPS
+
+      pinecone_openapi_config = OpenApiConfiguration.get_default_copy()
+      pinecone.init(
+         api_key=os.getenv("PINECONE_API_KEY"),
+         environment=PINECONE_ENV,
+         openapi_config=pinecone_openapi_config
+      )
+      logger.info(os.getenv("PINECONE_API_KEY"))
+      logger.info(os.getenv("OPENAI_API_KEY"))
+      pinecone_index = pinecone.Index("journal")
+
+      vector_store = PineconeVectorStore(
+         pinecone_index=pinecone_index,
+         api_key=os.getenv("PINECONE_API_KEY"),
+         environment=PINECONE_ENV
+      )
+      logger.info("Created vector store")
       index = VectorStoreIndex.from_vector_store(
          vector_store,
          ServiceContext.from_defaults()
@@ -55,7 +55,6 @@ def create(request, query: QueryGenerate):
             "success": "false",
          }
       )
-   logger.info("Created index")
    # query_engine = index.as_query_engine(
    #    node_postprocessors=[
    #       DecryptionNodePostProcessor(),
