@@ -13,7 +13,7 @@ bp = Blueprint("embeddings")
 @bp.post("/v1/embeddings/create")
 @cors(origin="*")
 @validate(json=EmbeddingCreate)
-async def create(request, body: EmbeddingCreate):
+def create(request, body: EmbeddingCreate):
 
    ## TODO: There will need to be an auth decorator incorporated with Auth0 here
 
@@ -26,8 +26,6 @@ async def create(request, body: EmbeddingCreate):
       text_input=text_input,
       openai_key=os.getenv("OPENAI_API_KEY"),
    )
-
-   print(embeddings_vector);
 
    if not embeddings_vector:
       return json(
