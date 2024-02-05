@@ -5,6 +5,7 @@ from sanic import Sanic
 from sanic_ext import validate
 from embeddings.types import EmbeddingCreate
 from sanic_ext import cors
+import os
 
 bp = Blueprint("embeddings")
 
@@ -23,8 +24,16 @@ async def create(request, body: EmbeddingCreate):
 
    embeddings_vector = rag_ops.create_embedding(
       text_input=text_input,
-      openai_key=sanic_app.config.OPENAI_API_KEY,
+      openai_key=os.getenv("OPENAI_API_KEY"),
    )
+
+   print(embeddings_vector);
+
+   if not embeddings_vector:
+      return json(
+         {"error": "Failed to create embeddings"},
+         status=500,
+      )
 
    # Upsert the embeddings into Pinecone
    user_id = body.user_id
