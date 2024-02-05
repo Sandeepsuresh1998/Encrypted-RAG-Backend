@@ -1,3 +1,4 @@
+import logging
 from utils.constants import APP_NAME
 from sanic import Sanic
 from sanic import Blueprint
@@ -13,6 +14,7 @@ import os
 from utils.constants import PINECONE_ENV
 import pinecone 
 
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("queries")
 
@@ -20,7 +22,7 @@ bp = Blueprint("queries")
 @cors(origin="*")
 @validate(query=QueryGenerate)
 def create(request, query: QueryGenerate):
-   print("Received query prompt: ", query.prompt)
+   logger.info("Received query prompt: %s", query.prompt)
    sanic_app = Sanic.get_app(APP_NAME)
    rag_ops = sanic_app.config.RAG_OPS
 
@@ -30,8 +32,8 @@ def create(request, query: QueryGenerate):
       environment=PINECONE_ENV,
       openapi_config=pinecone_openapi_config
    )
-   print(os.getenv("PINECONE_API_KEY"))
-   print(os.getenv("OPENAI_API_KEY"))
+   logger.info(os.getenv("PINECONE_API_KEY"))
+   logger.info(os.getenv("OPENAI_API_KEY"))
    pinecone_index = pinecone.Index("journal")
 
    vector_store = PineconeVectorStore(
@@ -39,18 +41,27 @@ def create(request, query: QueryGenerate):
       api_key=os.getenv("PINECONE_API_KEY"),
       environment=PINECONE_ENV
    )
-   print("Created vector store")
-   index = VectorStoreIndex.from_vector_store(
-      vector_store,
-      service_context=ServiceContext.from_defaults()
-   )
-   print("Created index")
+   logger.info("Created vector store")
+   try:
+      index = VectorStoreIndex.from_vector_store(
+         vector_store,
+         ServiceContext.from_defaults()
+      )
+   except Exception as e:
+      logger.error("Error creating index: %s", e)
+      return json(
+         {
+            "response": "Error creating index",
+            "success": "false",
+         }
+      )
+   logger.info("Created index")
    # query_engine = index.as_query_engine(
    #    node_postprocessors=[
    #       DecryptionNodePostProcessor(),
    #    ]
    # )
-   # print("Created query engine")
+   # logger.info("Created query engine")
    # query_response = query_engine.query(query.prompt)
    # return json(
    #    {
@@ -64,4 +75,3 @@ def create(request, query: QueryGenerate):
          "response": "This is a test response",
       }
    )
-   
